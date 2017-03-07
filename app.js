@@ -47,15 +47,6 @@ MongoClient.connect(mongodb_connection_string,function(err,db) {
 		app.use(bodyParser.json());
 		app.use(bodyParser.urlencoded({'extended':'true'}));
 		app.use(cookieParser(process.env.EXPRESS_SECRET));
-		app.use(function(req,res,next) {
-			if(!req.user && !req.cookies.anon_timestamp) {
-				// set cookie to expire in 30 days
-				var expiration = 30 * 24 * 3600000;
-				res.cookie('anon_timestamp','anon_' + Date.now(),{maxAge: expiration});
-				console.log('Set new anonymous cookie');
-			}
-			next();
-		});
 		app.use(express.static(path.join(__dirname,'builds')));
 		app.use(expressSession({ secret: process.env.EXPRESS_SECRET, resave:true, saveUninitialized:true }));
 		app.use(passport.initialize());
