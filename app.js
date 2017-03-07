@@ -8,7 +8,6 @@ var express = require('express'),
 	passportCfg = require('./passport.config.js'),
 	app = express(),
 	MongoClient = require('mongodb');
-	
 
 var db_name = 'nightlifeApp';
 
@@ -30,6 +29,11 @@ var routes = require('./routes/index.js'),
 		clientSecret: process.env.FB_APPSECRET,
 		callbackURL:process.env.FB_CBURL,
 		profileFields:[ 'displayName','name' ]
+	},
+	yelpObj = {
+		grant_type:'client_credentials',
+		client_id: process.env.YELP_APPID,
+		client_secret: process.env.YELP_APPSECRET
 	};
 
 MongoClient.connect(mongodb_connection_string,function(err,db) {
@@ -61,7 +65,7 @@ MongoClient.connect(mongodb_connection_string,function(err,db) {
 			compiler.watch(webpackCfg.watchOptions,webpackCfg.watchHandler);
 		}
 	
-		routes(app,db,passport);
+		routes(app,db,passport,yelpObj);
 
 		app.listen(app.get('port'),app.get('ip'), function() {
 			console.log("Node app is running at localhost:" + app.get('port'));
