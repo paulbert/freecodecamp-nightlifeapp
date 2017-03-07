@@ -9,7 +9,11 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 	var users = usersDAO(db),
 		bars = barsDAO(db),
 		yelpToken = '',
-		yelpExpire = 0;
+		yelpExpire = 0,
+		savedSearch = '';
+		
+	var expiration = 30 * 24 * 3600000;
+	
 		
 	function authYelp(callback) {
 		request.post({url:'https://api.yelp.com/oauth2/token',form:yelpObj},function(err,httpResponse,body) {
@@ -31,7 +35,7 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 	app.get('/auth/facebook', passport.authenticate('facebook'));
 	
 	app.get('/auth/facebook/callback',
-		passport.authenticate('facebook', { successRedirect: '/',failureRedirect: '/' }));
+		passport.authenticate('facebook'),function(req,res) { res.redirect('/?s=' + req.cookies.savedSearch);});
 		
 	app.get('/userInfo',function(req,res) {
 		console.log('The user is:');console.log(req.user);
@@ -47,8 +51,11 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 	// End Facebook login routes
 	
 	app.get('/searchBars', function(req,res) {
-		console.log('Searching: ' + req.query.search);
-		request.get('https://api.yelp.com/v3/businesses/search?term=bars&location=' + req.query.search, {'auth':{'bearer':yelpToken}}, function(error,response,body) {
+		var search = req.query.search;
+		console.log('Searching: ' + search);
+		res.cookie('savedSearch',search,{maxAge: expiration});
+		console.log(savedSearch);
+		request.get('https://api.yelp.com/v3/businesses/search?term=bars&location=' + search, {'auth':{'bearer':yelpToken}}, function(error,response,body) {
 			var bodyObj = JSON.parse(body);
 			res.send(bodyObj.businesses);
 		});
@@ -59,6 +66,7 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 	});
 	
 	app.get('*', function(req,res) {
+		console.log('Saved search: ' + savedSearch);
 		res.sendFile(path.join(__dirname + '/../builds/templates/index.html'));
 	});
 }

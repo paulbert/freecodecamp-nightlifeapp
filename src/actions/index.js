@@ -82,6 +82,9 @@ export function doSearch(search) {
 		return fetchGet('/searchBars?search=' + search)
 		.then(response => {
 			response.json().then((res) => {
+				if(window.history && window.history.pushState) {
+					window.history.pushState('',document.title,'/?s=' + search);
+				}
 				dispatch(receiveBars(res));
 			});
 		});
