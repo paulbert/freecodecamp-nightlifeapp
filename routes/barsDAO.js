@@ -1,5 +1,5 @@
 
-function barsDAO (db,testUsers) {
+function barsDAO (db) {
 	
 	var collection = 'bars';
 	
