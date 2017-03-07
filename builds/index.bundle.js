@@ -64,7 +64,7 @@
 	
 	var _App2 = _interopRequireDefault(_App);
 	
-	var _reduxThunk = __webpack_require__(227);
+	var _reduxThunk = __webpack_require__(228);
 	
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 	
@@ -74,8 +74,25 @@
 	
 	var store = (0, _redux.createStore)(_nightlifeApp2.default, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 	
+	function getQueryVariable(variable) {
+		var query = window.location.search.substring(1);
+		var vars = query.split('&');
+		for (var i = 0; i < vars.length; i++) {
+			var pair = vars[i].split('=');
+			if (decodeURIComponent(pair[0]) == variable) {
+				return decodeURIComponent(pair[1]);
+			}
+		}
+	}
+	
+	var search = getQueryVariable('s');
+	
 	// Set state based on logged in status
 	store.dispatch((0, _actions.checkLoggedIn)());
+	if (typeof search !== 'undefined') {
+		store.dispatch((0, _actions.doSearch)(search));
+		store.dispatch((0, _actions.changeText)(search));
+	}
 	
 	(0, _reactDom.render)(_react2.default.createElement(
 		_reactRedux.Provider,
@@ -23811,9 +23828,22 @@
 		}
 	};
 	
+	var searchText = function searchText() {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+		var action = arguments[1];
+	
+		switch (action.type) {
+			case 'CHANGE_TEXT':
+				return action.text;
+			default:
+				return state;
+		}
+	};
+	
 	var nightlifeApp = (0, _redux.combineReducers)({
 		bars: bars,
-		user: user
+		user: user,
+		searchText: searchText
 	});
 	
 	exports.default = nightlifeApp;
@@ -24608,11 +24638,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _FBLogin = __webpack_require__(228);
+	var _FBLogin = __webpack_require__(225);
 	
 	var _FBLogin2 = _interopRequireDefault(_FBLogin);
 	
-	var _GoingContain = __webpack_require__(225);
+	var _GoingContain = __webpack_require__(226);
 	
 	var _GoingContain2 = _interopRequireDefault(_GoingContain);
 	
@@ -24640,7 +24670,12 @@
 							_react2.default.createElement(
 								'td',
 								null,
-								'bar.title'
+								bar.name
+							),
+							_react2.default.createElement(
+								'td',
+								{ className: 'col-xs-3' },
+								_react2.default.createElement('img', { src: bar.image_url, className: 'img-responsive img-rounded' })
 							),
 							_react2.default.createElement(
 								'td',
@@ -24660,6 +24695,33 @@
 /* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var FBLogin = function FBLogin(_ref) {
+		var count = _ref.count;
+		return _react2.default.createElement(
+			"a",
+			{ href: "/auth/facebook", className: "btn btn-default" },
+			count + ' Going'
+		);
+	};
+	
+	exports.default = FBLogin;
+
+/***/ },
+/* 226 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
@@ -24672,7 +24734,7 @@
 	
 	var _reactRedux = __webpack_require__(178);
 	
-	var _Going = __webpack_require__(226);
+	var _Going = __webpack_require__(227);
 	
 	var _Going2 = _interopRequireDefault(_Going);
 	
@@ -24699,7 +24761,7 @@
 	exports.default = GoingContain;
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24728,7 +24790,7 @@
 	exports.default = Going;
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24754,33 +24816,6 @@
 	thunk.withExtraArgument = createThunkMiddleware;
 	
 	exports['default'] = thunk;
-
-/***/ },
-/* 228 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var FBLogin = function FBLogin(_ref) {
-		var count = _ref.count;
-		return _react2.default.createElement(
-			"a",
-			{ href: "/auth/facebook", className: "btn btn-default" },
-			count + ' Going'
-		);
-	};
-	
-	exports.default = FBLogin;
 
 /***/ }
 /******/ ]);
