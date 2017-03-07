@@ -24080,6 +24080,9 @@
 	
 			return fetchGet('/searchBars?search=' + search).then(function (response) {
 				response.json().then(function (res) {
+					if (window.history && window.history.pushState) {
+						window.history.pushState('', document.title, '/?s=' + search);
+					}
 					dispatch(receiveBars(res));
 				});
 			});
