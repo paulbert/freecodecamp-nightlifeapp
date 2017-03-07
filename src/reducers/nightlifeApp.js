@@ -21,9 +21,19 @@ const user = (state = { empty: true },action) => {
 	}
 };
 
+const searchText = (state = '',action) => {
+	switch(action.type) {
+		case 'CHANGE_TEXT':
+			return action.text;
+		default:
+			return state;
+	}
+};
+
 const nightlifeApp = combineReducers({
 	bars,
-	user
+	user,
+	searchText
 });
 
 export default nightlifeApp;
