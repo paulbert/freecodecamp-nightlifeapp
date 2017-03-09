@@ -5,7 +5,8 @@ import BarsList from '../components/BarsList'
 const mapStateToProps = (state) => {
 	return {
 		bars:state.bars,
-		user:state.user
+		user:state.user,
+		search:state.search.current
 	}
 };
 

@@ -12,7 +12,7 @@ const mapStateToProps = (state,ownProps) => {
 const mapDispatchToProps = (dispatch,ownProps) => {
 	return {
 		onGoingClick:() => {
-			dispatch(goingToBar(ownProps.bar,ownProps.user));
+			dispatch(goingToBar(ownProps.bar,ownProps.user,ownProps.search));
 		}
 	}
 };

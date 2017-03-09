@@ -3,27 +3,39 @@ function barsDAO (db) {
 	
 	var collection = 'bars';
 	
-	function addUser(bar,user,callback) {
-		
-		function insert(linkString) {
-			console.log('Inserting new bar titled: ' + bar.name);
-			db.collection(collection).insert(Object.assign({},bar,{users:[user]}),callback);
-		}
-		
-		if(pollLink === 'new') {
-			makeLink(poll.title.split(' '),1);
-		} else {
-			console.log('Start update...');
-			db.collection(collection).update({id:bar.id},{$push:{users:user}},callback);
-		}
+	function addUserToBar(bar,user,callback) {
+		console.log('Checking if bar exists...');
+		db.collection(collection).findOne({id:bar.id},function(err,result) {
+			if(result) {
+				console.log('Checking if user is already going to bar...');
+				var addUser = true,
+					users = result.users;
+				
+				if(result.users) {
+					for(var i = 0; i < users.length; i++) {
+						if(users[i]._id === user._id) {
+							addUser = false;
+							break;
+						}
+					}
+				}
+				if(addUser) {
+					console.log('Start update...');
+					db.collection(collection).update({id:bar.id},{$push:{users:user}},callback);
+				}
+			} else {
+				console.log('Inserting new bar titled: ' + bar.name);
+				db.collection(collection).insert(Object.assign({},bar,{users:[user]}),callback);
+			}
+		});
 	}
 	
 	function get(query,callback) {
-		db.collection(collection).find(query,callback);
+		db.collection(collection).find(query,{_id:-1},callback);
 	}
 	
 	return {
-		addUser:addUser,
+		addUserToBar:addUserToBar,
 		get:get
 	}
 	

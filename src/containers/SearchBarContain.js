@@ -5,7 +5,7 @@ import { vote,getOnePoll,doSearch,changeText } from '../actions'
 
 const mapStateToProps = (state) => {
 	return {
-		search:state.searchText
+		search:state.search.text
 	}
 };
 

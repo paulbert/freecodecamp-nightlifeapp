@@ -2,7 +2,7 @@ import React from 'react'
 import FBLogin from './FBLogin'
 import GoingContain from '../containers/GoingContain'
 
-const BarsList = ({bars,user}) => {
+const BarsList = ({bars,user,search}) => {
 	
 	return (
 	
@@ -15,7 +15,7 @@ const BarsList = ({bars,user}) => {
 					<tr key={ind}>
 						<td>{bar.name}</td>
 						<td className="col-xs-3"><img src={bar.image_url} className="img-responsive img-rounded" /></td>
-						<td>{user.empty === true ? <FBLogin count={goingCount} /> : <GoingContain bar={bar} count={goingCount} user={user} />}</td>
+						<td>{user.empty === true ? <FBLogin count={goingCount} /> : <GoingContain bar={bar} count={goingCount} user={user} search={search} />}</td>
 					</tr>
 				);
 			})}

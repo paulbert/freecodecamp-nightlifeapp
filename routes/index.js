@@ -50,6 +50,21 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 	});
 	// End Facebook login routes
 	
+	function getBar(bar,callback) {
+		bars.get({id:bar.id},function(err,results) {
+			if(err) {
+				console.log(err);
+			}
+			if(results.length > 0) {
+				if(results.length > 1) {
+					console.log('Bar ' + bar.id + ' duplicated somehow...');
+				}
+				callback(results[0]);
+			}
+			callback(bar);
+		});
+	}
+	
 	app.get('/searchBars', function(req,res) {
 		var search = req.query.search;
 		console.log('Searching: ' + search);
@@ -57,12 +72,25 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 		console.log(savedSearch);
 		request.get('https://api.yelp.com/v3/businesses/search?term=bars&location=' + search, {'auth':{'bearer':yelpToken}}, function(error,response,body) {
 			var bodyObj = JSON.parse(body);
-			res.send(bodyObj.businesses);
+			Promise.all(bodyObj.businesses.map(function(val) {
+				return new Promise(function(resolve,reject) {
+					getBar(val,function(bar) { resolve(bar); } );
+				});
+			})).then(function(bars) {
+				res.send(bars);
+			});
 		});
 	});
 	
 	app.post('/goingTo', function(req,res) {
-		// TODO: After clicking on going button, add this user to bar for one day
+		bars.addUserToBar(req.body.bar,req.body.user,function(err) {
+			if(err) {
+				console.log(err);
+				res.send({'error':true});
+			} else {
+				res.send({'error':false});
+			}
+		});
 	});
 	
 	app.get('*', function(req,res) {

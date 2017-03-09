@@ -23828,13 +23828,15 @@
 		}
 	};
 	
-	var searchText = function searchText() {
-		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+	var search = function search() {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { text: '', current: '' };
 		var action = arguments[1];
 	
 		switch (action.type) {
 			case 'CHANGE_TEXT':
-				return action.text;
+				return Object.assign({}, state, { text: action.text });
+			case 'RECEIVE_BARS':
+				return Object.assign({}, state, { current: action.search });
 			default:
 				return state;
 		}
@@ -23843,7 +23845,7 @@
 	var nightlifeApp = (0, _redux.combineReducers)({
 		bars: bars,
 		user: user,
-		searchText: searchText
+		search: search
 	});
 	
 	exports.default = nightlifeApp;
@@ -23914,7 +23916,7 @@
 	
 	var mapStateToProps = function mapStateToProps(state) {
 		return {
-			search: state.searchText
+			search: state.search.text
 		};
 	};
 	
@@ -24015,10 +24017,11 @@
 		};
 	};
 	
-	var receiveBars = function receiveBars(bars) {
+	var receiveBars = function receiveBars(bars, search) {
 		return {
 			type: 'RECEIVE_BARS',
-			bars: bars
+			bars: bars,
+			search: search
 		};
 	};
 	
@@ -24045,6 +24048,12 @@
 		return {
 			type: 'RECEIVE_USER_INFO',
 			user: user
+		};
+	};
+	
+	var tryAddToBar = function tryAddToBar() {
+		return {
+			type: 'TRY_ADD_TO_BAR'
 		};
 	};
 	
@@ -24083,7 +24092,7 @@
 					if (window.history && window.history.pushState) {
 						window.history.pushState('', document.title, '/?s=' + search);
 					}
-					dispatch(receiveBars(res));
+					dispatch(receiveBars(res, search));
 				});
 			});
 		};
@@ -24101,7 +24110,7 @@
 		});
 	};
 	
-	function goingToBar(bar, user) {
+	function goingToBar(bar, user, search) {
 	
 		return function (dispatch) {
 	
@@ -24109,7 +24118,9 @@
 	
 			return fetchPost('/goingTo', { bar: bar, user: user }).then(function (response) {
 				response.json().then(function (res) {
-					// TODO: update bar view
+					if (!res.error) {
+						dispatch(doSearch(search));
+					}
 				});
 			});
 		};
@@ -24619,7 +24630,8 @@
 	var mapStateToProps = function mapStateToProps(state) {
 		return {
 			bars: state.bars,
-			user: state.user
+			user: state.user,
+			search: state.search.current
 		};
 	};
 	
@@ -24653,7 +24665,8 @@
 	
 	var BarsList = function BarsList(_ref) {
 		var bars = _ref.bars,
-		    user = _ref.user;
+		    user = _ref.user,
+		    search = _ref.search;
 	
 	
 		return _react2.default.createElement(
@@ -24683,7 +24696,7 @@
 							_react2.default.createElement(
 								'td',
 								null,
-								user.empty === true ? _react2.default.createElement(_FBLogin2.default, { count: goingCount }) : _react2.default.createElement(_GoingContain2.default, { bar: bar, count: goingCount, user: user })
+								user.empty === true ? _react2.default.createElement(_FBLogin2.default, { count: goingCount }) : _react2.default.createElement(_GoingContain2.default, { bar: bar, count: goingCount, user: user, search: search })
 							)
 						);
 					})
@@ -24754,7 +24767,7 @@
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
 		return {
 			onGoingClick: function onGoingClick() {
-				dispatch((0, _actions.goingToBar)(ownProps.bar, ownProps.user));
+				dispatch((0, _actions.goingToBar)(ownProps.bar, ownProps.user, ownProps.search));
 			}
 		};
 	};
@@ -24780,7 +24793,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Going = function Going(_ref) {
-		var count = _ref.count;
+		var count = _ref.count,
+		    onGoingClick = _ref.onGoingClick;
 		return _react2.default.createElement(
 			'button',
 			{ onClick: function onClick() {

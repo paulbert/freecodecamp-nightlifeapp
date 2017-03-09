@@ -14,10 +14,11 @@ const searchingBars = () => {
 	}
 };
 
-const receiveBars = (bars) => {
+const receiveBars = (bars,search) => {
 	return {
 		type:'RECEIVE_BARS',
-		bars
+		bars,
+		search
 	}
 };
 
@@ -44,6 +45,12 @@ const receiveUserInfo = (user) => {
 	return {
 		type: 'RECEIVE_USER_INFO',
 		user
+	}
+};
+
+const tryAddToBar = () => {
+	return {
+		type: 'TRY_ADD_TO_BAR',
 	}
 };
 
@@ -85,7 +92,7 @@ export function doSearch(search) {
 				if(window.history && window.history.pushState) {
 					window.history.pushState('',document.title,'/?s=' + search);
 				}
-				dispatch(receiveBars(res));
+				dispatch(receiveBars(res,search));
 			});
 		});
 	}
@@ -103,7 +110,7 @@ const fetchPost = (url,reqBody) => {
 	})
 };
 
-export function goingToBar(bar,user) {
+export function goingToBar(bar,user,search) {
 	
 	return function(dispatch) {
 		
@@ -112,7 +119,9 @@ export function goingToBar(bar,user) {
 		return fetchPost('/goingTo',{bar:bar,user:user})
 		.then(response => {
 			response.json().then((res) => {
-				// TODO: update bar view
+				if(!res.error) {
+					dispatch(doSearch(search));
+				}
 			});
 		});
 	}
