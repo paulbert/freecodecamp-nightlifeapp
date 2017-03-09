@@ -31,7 +31,7 @@ function barsDAO (db) {
 	}
 	
 	function get(query,callback) {
-		db.collection(collection).find(query,{_id:-1},callback);
+		db.collection(collection).find(query,{_id:0}).toArray(callback);
 	}
 	
 	return {
