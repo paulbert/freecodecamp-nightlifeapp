@@ -12,7 +12,9 @@ const mapStateToProps = (state,ownProps) => {
 const mapDispatchToProps = (dispatch,ownProps) => {
 	return {
 		onGoingClick:() => {
-			dispatch(goingToBar(ownProps.bar,ownProps.user,ownProps.search));
+			if(!ownProps.isGoing) {
+				dispatch(goingToBar(ownProps.bar,ownProps.user,ownProps.search));
+			}
 		}
 	}
 };

@@ -93,6 +93,17 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 		});
 	});
 	
+	app.post('/notGoing', function(req,res) {
+		bars.removeUserFromBar(req.body.bar,req.body.user,function(err) {
+			if(err) {
+				console.log(err);
+				res.send({'error':true});
+			} else {
+				res.send({'error':false});
+			}
+		});
+	});
+	
 	app.get('*', function(req,res) {
 		console.log('Saved search: ' + savedSearch);
 		res.sendFile(path.join(__dirname + '/../builds/templates/index.html'));

@@ -23997,6 +23997,7 @@
 	exports.checkLoggedIn = checkLoggedIn;
 	exports.doSearch = doSearch;
 	exports.goingToBar = goingToBar;
+	exports.notGoing = notGoing;
 	
 	var _isomorphicFetch = __webpack_require__(221);
 	
@@ -24054,6 +24055,12 @@
 	var tryAddToBar = function tryAddToBar() {
 		return {
 			type: 'TRY_ADD_TO_BAR'
+		};
+	};
+	
+	var tryRemoveFromBar = function tryRemoveFromBar() {
+		return {
+			type: 'TRY_REMOVE_FROM_BAR'
 		};
 	};
 	
@@ -24117,6 +24124,22 @@
 			dispatch(tryAddToBar());
 	
 			return fetchPost('/goingTo', { bar: bar, user: user }).then(function (response) {
+				response.json().then(function (res) {
+					if (!res.error) {
+						dispatch(doSearch(search));
+					}
+				});
+			});
+		};
+	}
+	
+	function notGoing(bar, user, search) {
+	
+		return function (dispatch) {
+	
+			dispatch(tryRemoveFromBar());
+	
+			return fetchPost('/notGoing', { bar: bar, user: user }).then(function (response) {
 				response.json().then(function (res) {
 					if (!res.error) {
 						dispatch(doSearch(search));
@@ -24625,6 +24648,8 @@
 	
 	var _BarsList2 = _interopRequireDefault(_BarsList);
 	
+	var _actions = __webpack_require__(220);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var mapStateToProps = function mapStateToProps(state) {
@@ -24635,7 +24660,15 @@
 		};
 	};
 	
-	var BarsListContain = (0, _reactRedux.connect)(mapStateToProps)(_BarsList2.default);
+	var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+		return {
+			onNotGoingClick: function onNotGoingClick(bar, user, search) {
+				dispatch((0, _actions.notGoing)(bar, user, search));
+			}
+		};
+	};
+	
+	var BarsListContain = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_BarsList2.default);
 	
 	exports.default = BarsListContain;
 
@@ -24666,7 +24699,8 @@
 	var BarsList = function BarsList(_ref) {
 		var bars = _ref.bars,
 		    user = _ref.user,
-		    search = _ref.search;
+		    search = _ref.search,
+		    onNotGoingClick = _ref.onNotGoingClick;
 	
 	
 		return _react2.default.createElement(
@@ -24679,7 +24713,12 @@
 					'tbody',
 					null,
 					bars.map(function (bar, ind, arr) {
-						var goingCount = typeof bar.users === 'undefined' ? 0 : bar.users.length;
+						var goingCount = typeof bar.users === 'undefined' ? 0 : bar.users.length,
+						    userIsGoing = bar.users && bar.users.reduce(function (going, val) {
+							if (val._id === user._id) {
+								return true;
+							}return going;
+						}, false);
 						return _react2.default.createElement(
 							'tr',
 							{ key: ind },
@@ -24696,7 +24735,14 @@
 							_react2.default.createElement(
 								'td',
 								null,
-								user.empty === true ? _react2.default.createElement(_FBLogin2.default, { count: goingCount }) : _react2.default.createElement(_GoingContain2.default, { bar: bar, count: goingCount, user: user, search: search })
+								user.empty === true ? _react2.default.createElement(_FBLogin2.default, { count: goingCount }) : _react2.default.createElement(_GoingContain2.default, { bar: bar, count: goingCount, user: user, search: search, isGoing: userIsGoing }),
+								userIsGoing ? _react2.default.createElement(
+									'button',
+									{ onClick: function onClick() {
+											return onNotGoingClick(bar, user, search);
+										}, className: 'btn btn-warning' },
+									'Not going'
+								) : ''
 							)
 						);
 					})
@@ -24767,7 +24813,9 @@
 	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
 		return {
 			onGoingClick: function onGoingClick() {
-				dispatch((0, _actions.goingToBar)(ownProps.bar, ownProps.user, ownProps.search));
+				if (!ownProps.isGoing) {
+					dispatch((0, _actions.goingToBar)(ownProps.bar, ownProps.user, ownProps.search));
+				}
 			}
 		};
 	};

@@ -30,12 +30,17 @@ function barsDAO (db) {
 		});
 	}
 	
+	function removeUserFromBar(bar,user,callback) {
+		db.collection(collection).update({id:bar.id},{$pull:{users:{_id:user._id}}},callback);
+	}
+	
 	function get(query,callback) {
 		db.collection(collection).find(query,{_id:0}).toArray(callback);
 	}
 	
 	return {
 		addUserToBar:addUserToBar,
+		removeUserFromBar:removeUserFromBar,
 		get:get
 	}
 	

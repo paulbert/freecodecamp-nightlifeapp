@@ -54,6 +54,12 @@ const tryAddToBar = () => {
 	}
 };
 
+const tryRemoveFromBar = () => {
+	return {
+		type: 'TRY_REMOVE_FROM_BAR',
+	}
+};
+
 const fetchGet = (url) => {
 	return fetch(url, {
 		method: 'GET',
@@ -117,6 +123,24 @@ export function goingToBar(bar,user,search) {
 		dispatch(tryAddToBar());
 		
 		return fetchPost('/goingTo',{bar:bar,user:user})
+		.then(response => {
+			response.json().then((res) => {
+				if(!res.error) {
+					dispatch(doSearch(search));
+				}
+			});
+		});
+	}
+
+}
+
+export function notGoing(bar,user,search) {
+	
+	return function(dispatch) {
+		
+		dispatch(tryRemoveFromBar());
+		
+		return fetchPost('/notGoing',{bar:bar,user:user})
 		.then(response => {
 			response.json().then((res) => {
 				if(!res.error) {
