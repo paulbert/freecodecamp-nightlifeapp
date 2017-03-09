@@ -32,10 +32,30 @@ const search = (state = {text:'',current:''},action) => {
 	}
 };
 
+const spinners = (state = {}, action) => {
+	switch(action.type) {
+		case 'TRY_ADD_TO_BAR':
+			return Object.assign({},state,{going:action.bar.id});
+		case 'TRY_REMOVE_FROM_BAR':
+			return Object.assign({},state,{notGoing:action.bar.id});
+		case 'RECEIVE_BARS':
+			var newState = Object.assign({},state);
+			for(var prop in newState) {
+				if(newState.hasOwnProperty(prop)) {
+					newState[prop] = false;
+				}
+			}
+			return newState;
+		default:
+			return state;
+	}
+}
+
 const nightlifeApp = combineReducers({
 	bars,
 	user,
-	search
+	search,
+	spinners
 });
 
 export default nightlifeApp;

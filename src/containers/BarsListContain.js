@@ -7,7 +7,8 @@ const mapStateToProps = (state) => {
 	return {
 		bars:state.bars,
 		user:state.user,
-		search:state.search.current
+		search:state.search.current,
+		spinners:state.spinners
 	}
 };
 

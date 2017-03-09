@@ -48,15 +48,17 @@ const receiveUserInfo = (user) => {
 	}
 };
 
-const tryAddToBar = () => {
+const tryAddToBar = (bar) => {
 	return {
 		type: 'TRY_ADD_TO_BAR',
+		bar
 	}
 };
 
-const tryRemoveFromBar = () => {
+const tryRemoveFromBar = (bar) => {
 	return {
 		type: 'TRY_REMOVE_FROM_BAR',
+		bar
 	}
 };
 
@@ -120,7 +122,7 @@ export function goingToBar(bar,user,search) {
 	
 	return function(dispatch) {
 		
-		dispatch(tryAddToBar());
+		dispatch(tryAddToBar(bar));
 		
 		return fetchPost('/goingTo',{bar:bar,user:user})
 		.then(response => {
@@ -138,7 +140,7 @@ export function notGoing(bar,user,search) {
 	
 	return function(dispatch) {
 		
-		dispatch(tryRemoveFromBar());
+		dispatch(tryRemoveFromBar(bar));
 		
 		return fetchPost('/notGoing',{bar:bar,user:user})
 		.then(response => {

@@ -2,7 +2,7 @@ import React from 'react'
 import FBLogin from './FBLogin'
 import GoingContain from '../containers/GoingContain'
 
-const BarsList = ({bars,user,search,onNotGoingClick}) => {
+const BarsList = ({bars,user,search,spinners,onNotGoingClick}) => {
 	
 	return (
 	
@@ -17,8 +17,10 @@ const BarsList = ({bars,user,search,onNotGoingClick}) => {
 						<td>{bar.name}</td>
 						<td className="col-xs-3"><img src={bar.image_url} className="img-responsive img-rounded" /></td>
 						<td>
-							{user.empty === true ? <FBLogin count={goingCount} /> : <GoingContain bar={bar} count={goingCount} user={user} search={search} isGoing={userIsGoing} />}
-							{userIsGoing ? <button onClick={() => onNotGoingClick(bar,user,search)} className="btn btn-warning">Not going</button> : ''}
+							{user.empty ? <FBLogin count={goingCount} /> : <GoingContain bar={bar} count={goingCount} user={user} search={search} isGoing={userIsGoing} spinner={spinners.going} />}
+							{userIsGoing ? <button onClick={() => onNotGoingClick(bar,user,search)} className="btn btn-warning">
+								{spinners.notGoing === bar.id ? <i className="fa fa-spinner fa-pulse fa-lg fa-fw"></i> : 'Not going'}
+							</button> : ''}
 						</td>
 						
 					</tr>

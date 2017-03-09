@@ -7,15 +7,19 @@
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <!-- End Bootstrap-->
+<!--Font Awesome-->
+<script src="https://use.fontawesome.com/ffa483b487.js"></script>
+<!--End Font Awesome-->
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 </head>
 <body>
 	<script>
+		// FB Login
 		window.fbAsyncInit = function() {
 			FB.init({
-				appId      : '290523671363895',
+				appId      : '740474022788448',
 				cookie     : true,
 				xfbml      : true,
 				version    : 'v2.8'
@@ -30,6 +34,7 @@
 			js.src = "//connect.facebook.net/en_US/sdk.js";
 			fjs.parentNode.insertBefore(js, fjs);
 		}(document, 'script', 'facebook-jssdk'));
+		// Below to fix weird hash on facebook redirect
 		if (window.location.hash && window.location.hash == '#_=_') {
 			if (window.history && history.pushState) {
 				window.history.pushState('', document.title, window.location.pathname + window.location.search);

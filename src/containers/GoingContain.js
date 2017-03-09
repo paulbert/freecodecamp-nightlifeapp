@@ -5,7 +5,8 @@ import { goingToBar } from '../actions'
 
 const mapStateToProps = (state,ownProps) => {
 	return {
-		count:ownProps.count
+		count:ownProps.count,
+		spinner:ownProps.spinner === ownProps.bar.id
 	}
 };
 
