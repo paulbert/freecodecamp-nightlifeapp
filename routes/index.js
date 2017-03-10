@@ -14,6 +14,69 @@ module.exports = exports = function(app,db,passport,yelpObj) {
 		
 	var expiration = 30 * 24 * 3600000;
 	
+	// Logic for deleting bars based on rough time zone estimate
+	var	lastDelete = new Date(Date.UTC(2017,2,10,16)),
+		lastDeleteLong = 0;
+	
+	function zoneLong(zone) {
+		return (zone * 15) - 180;
+	}
+	
+	function createRemoveQuery (zoneStart,zoneEnd) {
+		return { "coordinates.longitude": {$gte: zoneLong(zoneStart), $lt: zoneLong(zoneEnd) }};
+	}
+	
+	function hoursSinceLastDelete() {
+		return Math.floor((Date.now() - lastDelete) / 3600000);
+	}
+	
+	function hourChange(hour,changeBy) {
+		var newHour = hour + changeBy;
+		if(newHour < 0) {
+			return 24 + newHour;
+		}
+		if(newHour > 23) {
+			return newHour - 24;
+		}
+		return newHour;
+	}
+	
+	app.use(function(req,res,next) {
+		var hourDiff = hoursSinceLastDelete(),
+			twoRemoves = false;
+		console.log('Checking to remove, last date: ' + lastDelete);
+		console.log('It is now: ' + new Date(Date.now()));
+		function callback(err) {
+			if(err) {
+				console.log(err);
+			}
+			if(!twoRemoves) {
+				next(); 
+			}
+			twoRemoves = false;
+		}
+		console.log('The difference in hours is: ' + hourDiff);
+		if(hourDiff > 0) {
+			if(hourDiff > 23) {
+				console.log('Removing all bars');
+				bars.remove({}, callback);
+			}
+			var zoneStart = hourChange(lastDelete.getHours(),14),
+				zoneEnd = hourChange(zoneStart,hourDiff);
+			lastDelete = new Date(Date.now());
+			lastDelete.setMinutes(0,0,0);
+			console.log('Removing zone #' + zoneStart + ' to zone #' + zoneEnd);
+			if(zoneEnd < zoneStart) {
+				twoRemoves = true;
+				bars.remove(createRemoveQuery(0,zoneEnd),  callback);
+				bars.remove(createRemoveQuery(zoneStart,23),  callback);
+			} else {
+				bars.remove(createRemoveQuery(zoneStart,zoneEnd), callback);
+			}
+		} else {
+			next();
+		}
+	});
 		
 	function authYelp(callback) {
 		request.post({url:'https://api.yelp.com/oauth2/token',form:yelpObj},function(err,httpResponse,body) {

@@ -9,6 +9,7 @@ const App = () => (
 	<div className="container">
 		<h1>NightLIFE yeah</h1>
 		<h2>Search for bars in your area, see if other people are going tonight, and RSVP!</h2>
+		<p>Resets at roughly 7am local time</p>
 		<SearchBarContain />
 		<BarsListContain />
 		<footer>Created by <a target="_blank" href="http://github.com/paulbert">Paul Albert</a></footer>

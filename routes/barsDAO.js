@@ -38,9 +38,14 @@ function barsDAO (db) {
 		db.collection(collection).find(query,{_id:0}).toArray(callback);
 	}
 	
+	function remove(query,callback) {
+		db.collection(collection).remove(query,callback);
+	}
+	
 	return {
 		addUserToBar:addUserToBar,
 		removeUserFromBar:removeUserFromBar,
+		remove:remove,
 		get:get
 	}
 	
