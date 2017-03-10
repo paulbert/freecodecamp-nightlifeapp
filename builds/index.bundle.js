@@ -23908,8 +23908,23 @@
 				null,
 				'NightLIFE yeah'
 			),
+			_react2.default.createElement(
+				'h2',
+				null,
+				'Search for bars in your area, see if other people are going tonight, and RSVP!'
+			),
 			_react2.default.createElement(_SearchBarContain2.default, null),
-			_react2.default.createElement(_BarsListContain2.default, null)
+			_react2.default.createElement(_BarsListContain2.default, null),
+			_react2.default.createElement(
+				'footer',
+				null,
+				'Created by ',
+				_react2.default.createElement(
+					'a',
+					{ target: '_blank', href: 'http://github.com/paulbert' },
+					'Paul Albert'
+				)
+			)
 		);
 	};
 	
@@ -24724,6 +24739,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	__webpack_require__(233);
+	
+	var placeholderImg = 'https://s3-media3.fl.yelpcdn.com/assets/srv0/yelp_styleguide/fe8c0c8725d3/assets/img/default_avatars/business_90_square.png';
+	
 	var BarsList = function BarsList(_ref) {
 		var bars = _ref.bars,
 		    user = _ref.user,
@@ -24737,7 +24756,7 @@
 			null,
 			_react2.default.createElement(
 				'table',
-				null,
+				{ id: 'bars-list' },
 				_react2.default.createElement(
 					'tbody',
 					null,
@@ -24747,23 +24766,40 @@
 							if (val._id === user._id) {
 								return true;
 							}return going;
-						}, false);
+						}, false),
+						    address = bar.location,
+						    imgUrl = !bar.image_url ? placeholderImg : bar.image_url;
+	
 						return _react2.default.createElement(
 							'tr',
 							{ key: ind },
 							_react2.default.createElement(
 								'td',
-								null,
-								bar.name
+								{ className: 'col-xs-3' },
+								_react2.default.createElement('div', { className: 'img-container', style: { backgroundImage: 'url(' + imgUrl + ')' } })
+							),
+							_react2.default.createElement(
+								'td',
+								{ className: 'col-xs-6' },
+								_react2.default.createElement(
+									'p',
+									{ className: 'lead' },
+									bar.name
+								),
+								_react2.default.createElement(
+									'p',
+									null,
+									address.address1
+								),
+								_react2.default.createElement(
+									'p',
+									null,
+									address.city + ', ' + address.state + ' ' + address.zip_code
+								)
 							),
 							_react2.default.createElement(
 								'td',
 								{ className: 'col-xs-3' },
-								_react2.default.createElement('img', { src: bar.image_url, className: 'img-responsive img-rounded' })
-							),
-							_react2.default.createElement(
-								'td',
-								null,
 								user.empty ? _react2.default.createElement(_FBLogin2.default, { count: goingCount }) : _react2.default.createElement(_GoingContain2.default, { bar: bar, count: goingCount, user: user, search: search, isGoing: userIsGoing, spinner: spinners.going }),
 								userIsGoing ? _react2.default.createElement(
 									'button',
@@ -24920,7 +24956,7 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./App.scss\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var content = __webpack_require__(230);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(231)(content, {});
@@ -24940,7 +24976,20 @@
 	}
 
 /***/ },
-/* 230 */,
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(232)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "input, button {\n  margin-right: 3px; }\n\nfooter {\n  margin: 10px 0; }\n", ""]);
+	
+	// exports
+
+
+/***/ },
 /* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25190,6 +25239,102 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 232 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+	
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+	
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(234);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(231)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./BarsList.scss", function() {
+				var newContent = require("!!../../node_modules/css-loader/index.js!../../node_modules/sass-loader/lib/loader.js!./BarsList.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(232)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".img-container {\n  position: relative;\n  width: 140px;\n  height: 140px;\n  overflow: hidden;\n  border-radius: 10px;\n  background-size: cover;\n  background-position: center;\n  background-repeat: no-repeat;\n  margin: 5px 0; }\n\n#bars-list td p {\n  margin-bottom: 2px; }\n", ""]);
+	
+	// exports
 
 
 /***/ }

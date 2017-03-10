@@ -2,4 +2,3 @@ node_modules/
 *.log
 *.map
 .env
-src/css/
